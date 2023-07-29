@@ -49,6 +49,7 @@ const PokerRoom = () => {
       pot = [],
       player_hands = [],
       stake = 0,
+      round,
    } = roomData || {};
    console.log({ player_hands });
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
@@ -214,11 +215,10 @@ const PokerRoom = () => {
                      </div>
                   ) : (
                      <div className={`${styles.gameInfoC}`}>
-                        {myHand && (
-                           <div>
-                              {myHand.name} ({myHand.desc})
-                           </div>
-                        )}
+                        <div>
+                           <span style={{ textTransform: "uppercase" }}>[{round}]</span>
+                           {myHand && <span>{myHand.desc}</span>}
+                        </div>
                         <ul className={`${styles.cardsC}`}>
                            {[...Array(5)].map((_, i) => (
                               <Card
