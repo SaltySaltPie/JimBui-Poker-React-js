@@ -1,0 +1,21 @@
+.contentC{
+   position: fixed;
+   z-index: 9;
+   top: 0;
+   left: 0;
+   height: 100vh;
+   width: 100vw;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   .screen {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #000;
+      opacity: 0.25;
+      z-index: -1;
+   }
+}

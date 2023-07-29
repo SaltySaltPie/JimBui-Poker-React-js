@@ -1,0 +1,325 @@
+.contentC {
+   display: flex;
+   position: relative;
+   height: calc(100vh - 4rem);
+   .chatBtn {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+   }
+   .chatC {
+      background-color: var(--scnd-1);
+      height: 100%;
+      width: min (20rem, 100vw);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: absolute;
+      left: 0;
+      animation: slideIn 0.6s ease forwards;
+      .msgC {
+         height: calc(100% - 1rem - 2rem);
+         width: 100%;
+         display: flex;
+         flex-direction: column-reverse;
+         // gap: 1rem;
+         overflow-y: overlay;
+         > li {
+            border-top: 1px solid var(--text-o);
+         }
+      }
+      .chatControls {
+         display: flex;
+         gap: 1rem;
+         height: 2rem;
+         > label {
+            // flex-grow: 1;
+            width: fit-content;
+         }
+      }
+   }
+   .gameC {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      .roomInfoC {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         display: flex;
+         justify-content: space-between;
+         padding: 0 1rem;
+      }
+      .tableC {
+         flex-grow: 1;
+         width: 100%;
+         display: flex;
+         justify-content: center;
+         padding: 4rem 0 2rem 0;
+         .table {
+            height: 100%;
+            width: 80%;
+            position: relative;
+            border-radius: 50%;
+            border: 10px solid #20201f;
+            background-color: #01442c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .seat {
+               position: absolute;
+               // width: 6rem;
+               text-align: center;
+               // transform: translateX(-50%);
+               .controlsC {
+                  padding: 0.4rem;
+                  border-radius: 10px;
+                  background-color: var(--scnd-1-o);
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 1rem;
+                  .controlsRow {
+                     display: flex;
+                     gap: 1rem;
+                     > label {
+                        width: 4rem;
+                     }
+                  }
+               }
+               &:nth-child(1) {
+                  bottom: 5%;
+                  left: 10%;
+               }
+               &:nth-child(9) {
+                  bottom: 5%;
+                  right: 10%;
+               }
+               &:nth-child(2) {
+                  left: 0;
+                  bottom: 30%;
+                  transform: translateX(-50%);
+               }
+               &:nth-child(8) {
+                  right: 0;
+                  bottom: 30%;
+                  transform: translateX(50%);
+               }
+               &:nth-child(3) {
+                  left: 0;
+                  top: 30%;
+                  transform: translateX(-50%);
+               }
+               &:nth-child(7) {
+                  right: 0;
+                  top: 30%;
+                  transform: translateX(50%);
+               }
+               &:nth-child(4) {
+                  top: 5%;
+                  left: 10%;
+               }
+               &:nth-child(6) {
+                  top: 5%;
+                  right: 10%;
+               }
+               &:nth-child(5) {
+                  top: 0;
+                  left: 50%;
+                  transform: translate(-50%, -100%);
+               }
+               &:nth-child(10) {
+                  bottom: 0;
+                  left: 50%;
+                  transform: translateX(-50%);
+               }
+            }
+
+            .gameInfoC {
+               .cardsC {
+                  display: flex;
+                  gap: 8px;
+                  .card {
+                     width: 3rem;
+                     font-size: 21px;
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+@media screen and (max-width: 1000px) {
+   .contentC {
+      display: flex;
+      position: relative;
+      height: calc(100vh - 4rem);
+      .chatBtn {
+         position: absolute;
+         bottom: 1rem;
+         left: 1rem;
+      }
+      .chatC {
+         background-color: var(--scnd-1);
+         height: 100%;
+         width: min (20rem, 100vw);
+         padding: 1rem;
+         display: flex;
+         flex-direction: column;
+         gap: 1rem;
+         position: absolute;
+         left: 0;
+         animation: slideIn 0.6s ease forwards;
+         .msgC {
+            height: calc(100% - 1rem - 2rem);
+            width: 100%;
+            display: flex;
+            flex-direction: column-reverse;
+            // gap: 1rem;
+            overflow-y: overlay;
+            > li {
+               border-top: 1px solid var(--text-o);
+            }
+         }
+         .chatControls {
+            display: flex;
+            gap: 1rem;
+            height: 2rem;
+            > label {
+               // flex-grow: 1;
+               width: fit-content;
+            }
+         }
+      }
+      .gameC {
+         flex-grow: 1;
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         position: relative;
+         .roomInfoC {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+         }
+         .tableC {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 4rem 0 2rem 0;
+            .table {
+               height: 100%;
+               width: 80%;
+               position: relative;
+               border-radius: 50%;
+               border: 10px solid #20201f;
+               background-color: #01442c;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               .seat {
+                  position: absolute;
+                  // width: 6rem;
+                  text-align: center;
+                  // transform: translateX(-50%);
+                  .controlsC {
+                     padding: 0.4rem;
+                     border-radius: 10px;
+                     background-color: var(--scnd-1-o);
+                     display: flex;
+                     flex-direction: column;
+                     align-items: center;
+                     gap: 1rem;
+                     .controlsRow {
+                        display: flex;
+                        gap: 1rem;
+                        > label {
+                           width: 4rem;
+                        }
+                     }
+                  }
+                  &:nth-child(1) {
+                     bottom: 5%;
+                     left: 10%;
+                  }
+                  &:nth-child(9) {
+                     bottom: 5%;
+                     right: 10%;
+                  }
+                  &:nth-child(2) {
+                     left: 0;
+                     bottom: 30%;
+                     transform: translateX(-50%);
+                  }
+                  &:nth-child(8) {
+                     right: 0;
+                     bottom: 30%;
+                     transform: translateX(50%);
+                  }
+                  &:nth-child(3) {
+                     left: 0;
+                     top: 30%;
+                     transform: translateX(-50%);
+                  }
+                  &:nth-child(7) {
+                     right: 0;
+                     top: 30%;
+                     transform: translateX(50%);
+                  }
+                  &:nth-child(4) {
+                     top: 5%;
+                     left: 10%;
+                  }
+                  &:nth-child(6) {
+                     top: 5%;
+                     right: 10%;
+                  }
+                  &:nth-child(5) {
+                     top: 0;
+                     left: 50%;
+                     transform: translate(-50%, -100%);
+                  }
+                  &:nth-child(10) {
+                     bottom: 0;
+                     left: 50%;
+                     transform: translateX(-50%);
+                  }
+               }
+   
+               .gameInfoC {
+                  .cardsC {
+                     display: flex;
+                     gap: 8px;
+                     .card {
+                        width: 2rem;
+                        font-size: 14px;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+   
+}
+
+@keyframes slideIn {
+   from {
+      transform: translateX(-100%);
+   }
+   to {
+      transform: translateX(0);
+   }
+}

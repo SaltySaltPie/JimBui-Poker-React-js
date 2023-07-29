@@ -1,0 +1,33 @@
+.contentC {
+   padding: 0.4rem 0.6rem;
+   border-radius: 10px;
+   cursor: pointer;
+   background-color: grey;
+   // color: var(--text);
+   color: var(--bg-b);
+   font-weight: 700;
+}
+
+.main {
+   &:enabled {
+      background-color: var(--main-1);
+   }
+}
+
+.warn {
+   &:enabled {
+      background-color: var(--acce-1);
+   }
+}
+
+.scnd {
+   &:enabled {
+      background-color: var(--scnd-1);
+   }
+}
+
+.bland {
+   &:enabled {
+      text-decoration: underline;
+   }
+}

@@ -1,0 +1,27 @@
+.contentC {
+   display: flex;
+   flex-direction: column;
+   background-color: var(--text);
+   padding: 6px 12px;
+   border-radius: 10px;
+   color: var(--scnd-1);
+   .title {
+      font-size: 12px;
+      font-weight: 700;
+   }
+   .inputC {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      > input {
+         // flex-grow: 1;
+         width: 100%;
+         // min-width: 0;
+      }
+      .charLimit {
+         flex-shrink: 0;
+         font-size: 12px;
+         width: 2rem;
+      }
+   }
+}

@@ -1,0 +1,13 @@
+.contentC {
+   padding: 2rem 2rem;
+   height: 20rem;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   user-select: none;
+   .msg {
+      text-align: center;
+      font-weight: 700;
+      font-size: 22px;
+   }
+}
