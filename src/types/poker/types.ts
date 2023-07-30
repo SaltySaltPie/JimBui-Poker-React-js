@@ -11,10 +11,7 @@ export type TPokerRoom = {
       rid: number;
       created_by: string;
       created_at: string;
-      scoreboard: {
-         sub: string;
-         alpha: number;
-      }[];
+      scoreboard: TPokerScoreboardLine[];
 
       //@ GAME LEVEL
       status: "playing" | "idle";
@@ -37,6 +34,12 @@ export type TPokerRoom = {
    };
 };
 
+export type TPokerScoreboardLine = {
+   sub: string;
+   alpha: number;
+   name: string;
+};
+
 export type TPokerRoomUser = {
    name: string;
    sub: string;
@@ -45,5 +48,5 @@ export type TPokerPlayerHand = {
    cards: (string | null)[];
    combo: string[];
    desc: string;
-   name: string
+   name: string;
 };

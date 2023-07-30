@@ -1,0 +1,1 @@
+export const jsArrayGetAfterIndex = (arr: any[], index:number) => arr[(index + 1) % arr.length] 

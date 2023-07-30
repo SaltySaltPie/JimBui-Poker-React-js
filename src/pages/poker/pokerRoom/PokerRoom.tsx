@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 import { useAxios } from "../../../hooks/common/useAxios";
 import { useAppContext } from "../../../contexts/appContext/AppState";
 import { useAuth0 } from "@auth0/auth0-react";
-import { TPokerPlayer, TPokerRoom } from "../../../types/poker/types";
+import { TPokerPlayer, TPokerRoom, TPokerScoreboardLine } from "../../../types/poker/types";
 import Card from "../../../components/shared/card/Card";
 import PokerPlayerBox, { TPokerPlayerBoxPlayer } from "../../../components/poker/pokerPlayerBox/PokerPlayerBox";
 import SmallSpinner from "../../../components/shared/smallSpinner/SmallSpinner";
@@ -28,6 +28,7 @@ const PokerRoom = () => {
    const [msgs, setMsgs] = useState<TChatMsg[]>([]);
    const [submitting, setSubmitting] = useState(false);
    const [showChat, setShowChat] = useState(false);
+   const [showScore, setShowScore] = useState(false);
    const [raise, setRaise] = useState(1);
 
    const { rid } = useParams();
@@ -40,6 +41,7 @@ const PokerRoom = () => {
 
    const { isFetching: qPkRFetching } = useQPokerRoom({});
    const { players = [], status, data: roomData } = room || {};
+
    const {
       community_cards = [],
       play_order = [],
@@ -50,10 +52,13 @@ const PokerRoom = () => {
       player_hands = [],
       stake = 0,
       round,
+      scoreboard = [],
    } = roomData || {};
    console.log({ player_hands });
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
-   const seatedPlayersSeatIndices = players.map((player, i) => (player ? i : null)).filter(Boolean) as number[];
+   const seatedPlayersSeatIndices = players
+      .map((player, i) => (player ? i : null))
+      .filter((seatIndex) => seatIndex != null) as number[];
    const isSeated = !!sub && seatedPlayers.map(({ sub }) => sub).includes(sub);
    const mySeatIndex = isSeated ? players.findIndex((player) => player?.sub === sub) : null;
    const myHand = mySeatIndex != null ? player_hands[mySeatIndex] : null;
@@ -63,6 +68,8 @@ const PokerRoom = () => {
       sb_index && seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((number) => number === sb_index) + 1);
    const bt_index =
       sb_index && seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((number) => number === sb_index) - 1);
+
+   console.log({ seatedPlayersSeatIndices, sb_index, bb_index, bt_index });
 
    const allSeats: (TPokerPlayerBoxPlayer | null)[] = [...Array(9)].map((_, i) => {
       const player = players[i];
@@ -255,6 +262,26 @@ const PokerRoom = () => {
             </form>
          ) : (
             <MainButton title="Chat" onClick={() => setShowChat(true)} className={`${styles.chatBtn}`} />
+         )}
+         {showScore ? (
+            <article className={`${styles.scoreC}`}>
+               <div className={`${styles.titleC}`}>
+                  <span>Scoreboard</span>
+                  <MainButton title="Hide" type="warn" onClick={() => setShowScore(false)} />
+               </div>
+               <ul className={`${styles.scoreLines}`}>
+                  {scoreboard.map(({ alpha, name, sub }, key) => (
+                     <li key={key + sub}>
+                        <b>{name}: </b>
+                        <span className={`${styles[alpha > 0 ? "pos" : "nev"]}`}>
+                           {alpha > 0 ? `+${alpha}` : alpha}
+                        </span>
+                     </li>
+                  ))}
+               </ul>
+            </article>
+         ) : (
+            <MainButton title="Scoreboard" onClick={() => setShowScore(true)} className={`${styles.scoreBtn}`} />
          )}
       </section>
    );
