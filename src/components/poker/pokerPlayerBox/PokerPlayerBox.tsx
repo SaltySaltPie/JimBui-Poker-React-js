@@ -28,7 +28,7 @@ type TPokerPlayerBoxProps = {
 };
 export type TPokerPlayerBoxPlayer = {
    sub: string;
-   name: string;
+   name: string | null;
    lastAction?: "call" | "check" | "fold" | "raise" | "";
    hand?: Partial<TPokerPlayerHand> | null;
    pos?: "BB" | "SB" | "BT" | null;

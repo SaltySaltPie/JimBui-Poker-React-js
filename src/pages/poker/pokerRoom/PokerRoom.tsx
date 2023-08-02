@@ -53,10 +53,11 @@ const PokerRoom = () => {
       stake = 0,
       round,
       scoreboard = [],
+      game_players = [],
    } = roomData || {};
    console.log({ player_hands });
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
-   const seatedPlayersSeatIndices = players
+   const seatedPlayersSeatIndices = game_players
       .map((player, i) => (player ? i : null))
       .filter((seatIndex) => seatIndex != null) as number[];
    const isSeated = !!sub && seatedPlayers.map(({ sub }) => sub).includes(sub);
@@ -65,11 +66,11 @@ const PokerRoom = () => {
    const { combo = [] } = myHand || {};
 
    const bb_index =
-      sb_index && seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((number) => number === sb_index) + 1);
+      sb_index != null &&
+      seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((seatIndex) => seatIndex === sb_index) + 1);
    const bt_index =
-      sb_index && seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((number) => number === sb_index) - 1);
-
-   console.log({ seatedPlayersSeatIndices, sb_index, bb_index, bt_index });
+      sb_index != null &&
+      seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((seatIndex) => seatIndex === sb_index) - 1);
 
    const allSeats: (TPokerPlayerBoxPlayer | null)[] = [...Array(9)].map((_, i) => {
       const player = players[i];
@@ -87,7 +88,7 @@ const PokerRoom = () => {
       return null;
    });
 
-   const iAmInTurn = mySeatIndex ? play_order[play_order_index] === mySeatIndex : null;
+   const iAmInTurn = mySeatIndex != null ? play_order[play_order_index] === mySeatIndex : null;
    console.log({ iAmInTurn });
    const myRoundPot = mySeatIndex != null ? round_pot[mySeatIndex] : 0;
 
@@ -178,7 +179,7 @@ const PokerRoom = () => {
                      </div>
                   ))}
                   <div className={`${styles.seat}`}>
-                     {iAmInTurn && stake && !submitting && (
+                     {iAmInTurn && stake != null && !submitting && (
                         <div className={`${styles.controlsC}`}>
                            <div className={`${styles.controlsRow}`}>
                               <MainButton title="Fold!" type="warn" onClick={() => handleAction("fold")} />

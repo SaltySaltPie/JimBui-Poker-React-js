@@ -1,6 +1,6 @@
 export type TPokerPlayer = {
    sub: string;
-   name: string;
+   name: string | null;
 };
 
 export type TPokerRoom = {
@@ -19,6 +19,7 @@ export type TPokerRoom = {
          sub: string;
          action: "stand-up";
       }[];
+      game_players: (TPokerPlayer | null)[];
       community_cards: string[]; // [3h,Jd,As,Qc] (turn)
       player_hands: (TPokerPlayerHand | null)[]; //@SENSITIVE
 
