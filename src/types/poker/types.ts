@@ -28,6 +28,7 @@ export type TPokerRoom = {
       //*                     0              3  4              7
       round_pot: number[]; //[30, null, null,30,30, null, null,30, null]
       round: "pre" | "flop" | "turn" | "river";
+      nextTimeOut: number;
 
       sb_index: number; // sub2 : 3
       play_order: number[]; // sub index[] : [4 , 7, 0, 3] => [0 , 3, 4, 7]
@@ -50,4 +51,6 @@ export type TPokerPlayerHand = {
    combo: string[];
    desc: string;
    name: string;
+   show?: boolean
+   winner?: boolean
 };

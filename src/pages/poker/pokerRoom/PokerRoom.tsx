@@ -53,9 +53,10 @@ const PokerRoom = () => {
       stake = 0,
       round,
       scoreboard = [],
-      game_players = [],
+      game_players = [], 
+      nextTimeOut
    } = roomData || {};
-   console.log({ player_hands });
+   const bbCost = 2;
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
    const seatedPlayersSeatIndices = game_players
       .map((player, i) => (player ? i : null))
@@ -75,22 +76,20 @@ const PokerRoom = () => {
    const allSeats: (TPokerPlayerBoxPlayer | null)[] = [...Array(9)].map((_, i) => {
       const player = players[i];
       if (player) {
+         const inTurn = i === play_order[play_order_index];
          return {
             ...player,
             hand: player_hands[i] || (play_order.includes(i) ? { cards: [null, null] } : null),
             roundPot: round_pot[i],
-            totalPot: pot[i],
             pos: bb_index === i ? "BB" : sb_index === i ? "SB" : bt_index === i ? "BT" : null,
-            inTurn: i === play_order[play_order_index],
-            lastAction: "",
+            inTurn,
          };
       }
       return null;
    });
-
    const iAmInTurn = mySeatIndex != null ? play_order[play_order_index] === mySeatIndex : null;
-   console.log({ iAmInTurn });
    const myRoundPot = mySeatIndex != null ? round_pot[mySeatIndex] : 0;
+   const myTotalSpent = mySeatIndex != null ? pot[mySeatIndex] || 0 + round_pot[mySeatIndex] || 0 : 0;
 
    const handleChatSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       sioSendChat(chat);
@@ -169,47 +168,15 @@ const PokerRoom = () => {
                <div className={`${styles.table} `}>
                   {allSeats.map((seat, i) => (
                      <div className={`${styles.seat} `} key={i}>
-                        {seat != null ? (
-                           <PokerPlayerBox player={seat} />
+                        {seat != null && room ? (
+                           <PokerPlayerBox room={room} player={seat} seat={i} />
                         ) : isSeated ? (
-                           <div>Empty Seat</div>
+                           <div>Empty</div>
                         ) : (
                            <MainButton title="Sit here" onClick={() => handleSit(i)} />
                         )}
                      </div>
                   ))}
-                  <div className={`${styles.seat}`}>
-                     {iAmInTurn && stake != null && !submitting && (
-                        <div className={`${styles.controlsC}`}>
-                           <div className={`${styles.controlsRow}`}>
-                              <MainButton title="Fold!" type="warn" onClick={() => handleAction("fold")} />
-                              <MainButton
-                                 title={`Call ${stake - myRoundPot}`}
-                                 enabled={myRoundPot < stake}
-                                 onClick={() => handleAction("call")}
-                              />
-                              <MainButton
-                                 title={`Check`}
-                                 enabled={myRoundPot === stake}
-                                 onClick={() => handleAction("check")}
-                              />
-                           </div>
-                           <div className={`${styles.controlsRow}`}>
-                              <MainInput
-                                 title="Raise"
-                                 value={raise}
-                                 onChange={(str) => setRaise(Math.floor(Number(str)))}
-                              />
-                              <MainButton
-                                 title={`Raise to ${raise + stake}`}
-                                 type="warn"
-                                 enabled={raise > 0}
-                                 onClick={() => handleAction("raise")}
-                              />
-                           </div>
-                        </div>
-                     )}
-                  </div>
 
                   {submitting ? (
                      <SmallSpinner />
@@ -238,7 +205,40 @@ const PokerRoom = () => {
                            ))}
                         </ul>
                         <div>
-                           <span>Pot: {pot.reduce((prev, curr) => prev + curr, 0)}</span> | <span>Stake: {stake}</span>
+                           <span>Pot: {pot.reduce((prev, curr) => prev + curr, 0)}</span> |{" "}
+                           <span>Spent: {myTotalSpent}</span> | <span>Stake: {stake}</span>
+                        </div>
+                     </div>
+                  )}
+               </div>
+               <div className={`${styles.controlsC}`}>
+                  {iAmInTurn && stake != null && !submitting && (
+                     <div className={`${styles.controls}`}>
+                        <div className={`${styles.controlsRow}`}>
+                           <MainButton title="Fold!" type="warn" onClick={() => handleAction("fold")} />
+                           <MainButton
+                              title={`Call ${stake - myRoundPot}`}
+                              enabled={myRoundPot < stake}
+                              onClick={() => handleAction("call")}
+                           />
+                           <MainButton
+                              title={`Check`}
+                              enabled={myRoundPot === stake}
+                              onClick={() => handleAction("check")}
+                           />
+                        </div>
+                        <div className={`${styles.controlsRow}`}>
+                           <MainInput
+                              title="Raise"
+                              value={raise}
+                              onChange={(str) => setRaise(Math.floor(Number(str)))}
+                           />
+                           <MainButton
+                              title={`Raise to ${raise + stake}`}
+                              type="warn"
+                              enabled={raise > 0}
+                              onClick={() => handleAction("raise")}
+                           />
                         </div>
                      </div>
                   )}
@@ -282,7 +282,7 @@ const PokerRoom = () => {
                </ul>
             </article>
          ) : (
-            <MainButton title="Scoreboard" onClick={() => setShowScore(true)} className={`${styles.scoreBtn}`} />
+            <MainButton title="Score" onClick={() => setShowScore(true)} className={`${styles.scoreBtn}`} />
          )}
       </section>
    );
