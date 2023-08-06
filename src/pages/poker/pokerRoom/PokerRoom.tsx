@@ -13,7 +13,7 @@ import { useAppContext } from "../../../contexts/appContext/AppState";
 import { useAuth0 } from "@auth0/auth0-react";
 import { TPokerPlayer, TPokerRoom, TPokerScoreboardLine } from "../../../types/poker/types";
 import Card from "../../../components/shared/card/Card";
-import PokerPlayerBox, { TPokerPlayerBoxPlayer } from "../../../components/poker/pokerPlayerBox/PokerPlayerBox";
+import PokerPlayerBox from "../../../components/poker/pokerPlayerBox/PokerPlayerBox";
 import SmallSpinner from "../../../components/shared/smallSpinner/SmallSpinner";
 import { AxiosError } from "axios";
 const PokerRoom = () => {
@@ -46,47 +46,22 @@ const PokerRoom = () => {
       community_cards = [],
       play_order = [],
       play_order_index = 0,
-      sb_index,
       round_pot = [],
       pot = [],
       player_hands = [],
       stake = 0,
       round,
       scoreboard = [],
-      game_players = [], 
-      nextTimeOut
+      game_players = [],
    } = roomData || {};
    const bbCost = 2;
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
-   const seatedPlayersSeatIndices = game_players
-      .map((player, i) => (player ? i : null))
-      .filter((seatIndex) => seatIndex != null) as number[];
+
    const isSeated = !!sub && seatedPlayers.map(({ sub }) => sub).includes(sub);
    const mySeatIndex = isSeated ? players.findIndex((player) => player?.sub === sub) : null;
    const myHand = mySeatIndex != null ? player_hands[mySeatIndex] : null;
    const { combo = [] } = myHand || {};
 
-   const bb_index =
-      sb_index != null &&
-      seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((seatIndex) => seatIndex === sb_index) + 1);
-   const bt_index =
-      sb_index != null &&
-      seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((seatIndex) => seatIndex === sb_index) - 1);
-
-   const allSeats: (TPokerPlayerBoxPlayer | null)[] = [...Array(9)].map((_, i) => {
-      const player = players[i];
-      if (player) {
-         const inTurn = i === play_order[play_order_index];
-         return {
-            ...player,
-            hand: player_hands[i] || (play_order.includes(i) ? { cards: [null, null] } : null),
-            roundPot: round_pot[i],
-            pos: bb_index === i ? "BB" : sb_index === i ? "SB" : bt_index === i ? "BT" : null,
-            inTurn,
-         };
-      }
-      return null;
-   });
    const iAmInTurn = mySeatIndex != null ? play_order[play_order_index] === mySeatIndex : null;
    const myRoundPot = mySeatIndex != null ? round_pot[mySeatIndex] : 0;
    const myTotalSpent = mySeatIndex != null ? pot[mySeatIndex] || 0 + round_pot[mySeatIndex] || 0 : 0;
@@ -152,6 +127,7 @@ const PokerRoom = () => {
    };
 
    if (qPkRFetching) return <BodyFiller loading />;
+   if (!room) return <BodyFiller fillerMsg="Null Room" />;
    return (
       <section className={`${styles.contentC}`}>
          <article className={`${styles.gameC}`}>
@@ -166,10 +142,10 @@ const PokerRoom = () => {
             </div>
             <div className={`${styles.tableC}`}>
                <div className={`${styles.table} `}>
-                  {allSeats.map((seat, i) => (
-                     <div className={`${styles.seat} `} key={i}>
-                        {seat != null && room ? (
-                           <PokerPlayerBox room={room} player={seat} seat={i} />
+                  {[...Array(9)].map((_, i) => (
+                     <div className={`${styles.seat}`} key={i}>
+                        {players[i] ? (
+                           <PokerPlayerBox room={room} seat={i} />
                         ) : isSeated ? (
                            <div>Empty</div>
                         ) : (
