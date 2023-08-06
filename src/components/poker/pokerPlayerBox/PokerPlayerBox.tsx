@@ -3,8 +3,10 @@ import { TPokerPlayerHand, TPokerRoom } from "../../../types/poker/types";
 import Card from "../../shared/card/Card";
 import Chip from "../../shared/chip/Chip";
 import styles from "./PokerPlayerBox.module.scss";
+import { jsArrayGetAfterIndex } from "../../../utils/js/jsArrayGetAfterIndex";
+import { jsArrayGetBeforeIndex } from "../../../utils/js/jsArrayGetBeforeIndex";
 const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
-   const { data: roomData } = room;
+   const { data: roomData, players = [] } = room;
    const {
       game_players = [],
       sb_index,
@@ -14,23 +16,22 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
       play_order_index,
       player_hands = [],
    } = roomData;
-   const seatedPlayersSeatIndices = game_players
+   const playerSeats = game_players
       .map((player, i) => (player ? i : null))
       .filter((seatIndex) => seatIndex != null) as number[];
 
-   const player = game_players[seat];
+   const player = players[seat];
    const { name } = player || {};
    const roundPot = round_pot[seat];
    const hand = player_hands[seat];
+   const { winner } = hand || {};
 
    const inTurn = play_order[play_order_index] === seat;
-   const bb_index =
-      sb_index != null &&
-      seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((seatIndex) => seatIndex === sb_index) + 1);
-   const bt_index =
-      sb_index != null &&
-      seatedPlayersSeatIndices.at(seatedPlayersSeatIndices.findIndex((seatIndex) => seatIndex === sb_index) - 1);
-   const pos = bb_index === seat ? "BB" : bt_index === seat ? "BT" : sb_index === seat ? "SB" : "";
+   const sbOrderIndex = playerSeats.findIndex((seatIndex) => seatIndex === sb_index);
+
+   const bb_index = sb_index != null && jsArrayGetAfterIndex(playerSeats, sbOrderIndex);
+   const bt_index = sb_index != null && jsArrayGetBeforeIndex(playerSeats, sbOrderIndex);
+   const pos = bb_index === seat ? "BB" : sb_index === seat ? "SB" : bt_index === seat ? "BT" : "";
    const { combo = [] } = hand || {};
 
    const turnTime = 10000;
@@ -39,12 +40,11 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
 
    useEffect(() => {
       let interval: NodeJS.Timer;
-      if (nextTimeOut && inTurn) interval = setInterval(() => setTimeLeft(Math.floor(nextTimeOut - Date.now())), 100);
+      if (inTurn || winner) interval = setInterval(() => setTimeLeft(Math.max(nextTimeOut - Date.now(), 0)), 100);
       return () => interval && clearInterval(interval);
-   }, [inTurn, nextTimeOut]);
-
+   }, [inTurn, nextTimeOut, winner]);
    return (
-      <div className={`${styles.contentC} ${inTurn && styles.inTurn} `}>
+      <div className={`${styles.contentC} ${inTurn && styles.inTurn}`}>
          <div className={`${styles.name}`}>{name}</div>
          <div className={`${styles.cardsC}`}>
             {hand ? (
@@ -64,12 +64,12 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
                <Chip value={roundPot} />
             </div>
          )}
-         {inTurn && (
+         {(inTurn || winner) && (
             <div className={`${styles.progressC}`}>
                <div className={`${styles.progress}`} style={{ width: `${progressWidth}%` }}></div>
             </div>
          )}
-      </div>
+     </div>
    );
 };
 
