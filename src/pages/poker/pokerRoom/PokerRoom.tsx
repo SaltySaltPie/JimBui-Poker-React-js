@@ -58,6 +58,7 @@ const PokerRoom = () => {
       players_action = [],
       previous_player_action,
    } = roomData || {};
+   console.log({player_hands})
 
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
 
@@ -134,7 +135,24 @@ const PokerRoom = () => {
       setSubmitting(true);
       appDispatch({ type: "pushInfoModal", payload: { msg: `Requesting to Rabbit Hunt!` } });
       try {
-      } catch (error) {}
+         await Axios.post(`/poker/rooms/${rid}/rabbit`);
+      } catch (error) {
+         const err = error as AxiosError<any, { error: string; src: string }>;
+         console.log({ msg: err?.response?.data?.error });
+         appDispatch({ type: "pushInfoModal", payload: { type: "warn", msg: `Can't request Rabbit Hunt` } });
+      }
+      setSubmitting(false);
+   };
+   const handleShow = async () => {
+      setSubmitting(true);
+      appDispatch({ type: "pushInfoModal", payload: { msg: `Requesting to show hand!` } });
+      try {
+         await Axios.post(`/poker/rooms/${rid}/show`);
+      } catch (error) {
+         const err = error as AxiosError<any, { error: string; src: string }>;
+         console.log({ msg: err?.response?.data?.error });
+         appDispatch({ type: "pushInfoModal", payload: { type: "warn", msg: `Can't request show hand` } });
+      }
       setSubmitting(false);
    };
 
@@ -223,9 +241,8 @@ const PokerRoom = () => {
                         </div>
                         {round === "post" && (
                            <div className={`${styles.postControls}`}>
-                              {!show && <MainButton title="Show" />}
-                              {community_cards.length < 5 && <MainButton title="Rabbit" />}
-                              <MainButton title="Start" onClick={handleStart} />
+                              {!show && <MainButton title="Show" onClick={handleShow} />}
+                              {community_cards.length < 5 && <MainButton title="Rabbit" onClick={handleRabbit} />}
                            </div>
                         )}
                      </div>

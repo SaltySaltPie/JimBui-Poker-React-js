@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { TPokerPlayerHand, TPokerRoom } from "../../../types/poker/types";
+import { TPokerRoom } from "../../../types/poker/types";
 import Card from "../../shared/card/Card";
 import Chip from "../../shared/chip/Chip";
 import styles from "./PokerPlayerBox.module.scss";
 import { jsArrayGetAfterIndex } from "../../../utils/js/jsArrayGetAfterIndex";
 import { jsArrayGetBeforeIndex } from "../../../utils/js/jsArrayGetBeforeIndex";
 const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
-   const { data: roomData, players = [] } = room;
+   const { data: roomData, players = [], config } = room;
+   const { timeoutMs = 10000 } = config || {};
    const {
       round,
       game_players = [],
@@ -19,7 +20,6 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
       players_action = [],
       winnerSeats = [],
    } = roomData;
-   console.log({ players_action });
    const playerSeats = game_players
       .map((player, i) => (player ? i : null))
       .filter((seatIndex) => seatIndex != null) as number[];
@@ -39,10 +39,8 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
    const bt_index = sb_index != null && jsArrayGetBeforeIndex(playerSeats, sbOrderIndex);
    const pos = bb_index === seat ? "BB" : sb_index === seat ? "SB" : bt_index === seat ? "BT" : "";
 
-   const turnTime = 10000;
    const [timeLeft, setTimeLeft] = useState(0);
-   const progressWidth = timeLeft > 0 ? (timeLeft / turnTime) * 100 : 0;
-
+   const progressWidth = timeLeft > 0 ? (timeLeft / timeoutMs) * 100 : 0;
    useEffect(() => {
       let interval: NodeJS.Timer;
       if (inTurn) interval = setInterval(() => setTimeLeft(Math.max(nextTimeOut - Date.now(), 0)), 100);

@@ -6,6 +6,9 @@ export type TPokerPlayerAction = "call" | "fold" | "check" | "raise" | null;
 export type TPokerRoom = {
    players: (TPokerPlayer | null)[];
    status: string;
+   config: {
+      timeoutMs: number;
+   };
    data: {
       //@ ROOM LEVEL
       rid: number;

@@ -82,9 +82,7 @@ const Nav = () => {
                   <MainButton type="bland" title="Log Out" onClick={logout} />
                </div>
             ) : (
-               <button className={`${styles.loginC}`} onClick={() => loginWithRedirect()}>
-                  Log In
-               </button>
+               <MainButton title="Log In" onClick={() => loginWithRedirect()} />
             )}
          </div>
          <Outlet />
