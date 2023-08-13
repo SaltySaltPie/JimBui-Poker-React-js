@@ -4,7 +4,6 @@
    flex-direction: column;
    align-items: center;
    width: 5rem;
-   padding-bottom: 8px;
    border-radius: 10px;
    position: relative;
    .name {
@@ -18,10 +17,14 @@
    .cardsC {
       display: flex;
       gap: 8px;
+      margin-bottom: 8px;
       .card {
          width: 1.2rem;
          font-size: 14px;
       }
+   }
+   .handName {
+      font-size: 10px;
    }
    .pos {
       position: absolute;
@@ -38,10 +41,25 @@
    }
 
    .action {
+      font-weight: 700;
+      font-size: 12px;
       text-transform: uppercase;
       width: 100%;
-      background-color: var(--acce-1);
       border-radius: 0 0 10px 10px;
+      background-color: #155710;
+   }
+   .action-call {
+      background-color: #047cda;
+   }
+   .action-raise {
+      background-color: #da0000;
+   }
+   .action-fold {
+      background-color: #d0d2d6;
+      color: var(--bg-b);
+   }
+   .action-check {
+      background-color: #8bc444;
    }
 
    .seat {
@@ -57,9 +75,9 @@
       width: 80%;
       height: 6px;
       border-radius: 10px;
-      margin-top: 10px;
       overflow: hidden;
       outline: 1px solid var(--acce-1);
+      margin-bottom: 8px;
       .progress {
          background-color: var(--acce-1);
          height: 100%;

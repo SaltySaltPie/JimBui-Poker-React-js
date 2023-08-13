@@ -8,6 +8,7 @@ import { jsArrayGetBeforeIndex } from "../../../utils/js/jsArrayGetBeforeIndex";
 const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
    const { data: roomData, players = [] } = room;
    const {
+      round,
       game_players = [],
       sb_index,
       nextTimeOut,
@@ -15,7 +16,10 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
       play_order = [],
       play_order_index,
       player_hands = [],
+      players_action = [],
+      winnerSeats = [],
    } = roomData;
+   console.log({ players_action });
    const playerSeats = game_players
       .map((player, i) => (player ? i : null))
       .filter((seatIndex) => seatIndex != null) as number[];
@@ -24,15 +28,16 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
    const { name } = player || {};
    const roundPot = round_pot[seat];
    const hand = player_hands[seat];
-   const { winner } = hand || {};
+   const { combo = [], name: handName, show } = hand || {};
 
    const inTurn = play_order[play_order_index] === seat;
    const sbOrderIndex = playerSeats.findIndex((seatIndex) => seatIndex === sb_index);
+   const boxAction = players_action[seat];
+   const isWinner = winnerSeats.includes(seat);
 
    const bb_index = sb_index != null && jsArrayGetAfterIndex(playerSeats, sbOrderIndex);
    const bt_index = sb_index != null && jsArrayGetBeforeIndex(playerSeats, sbOrderIndex);
    const pos = bb_index === seat ? "BB" : sb_index === seat ? "SB" : bt_index === seat ? "BT" : "";
-   const { combo = [] } = hand || {};
 
    const turnTime = 10000;
    const [timeLeft, setTimeLeft] = useState(0);
@@ -40,9 +45,9 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
 
    useEffect(() => {
       let interval: NodeJS.Timer;
-      if (inTurn || winner) interval = setInterval(() => setTimeLeft(Math.max(nextTimeOut - Date.now(), 0)), 100);
+      if (inTurn) interval = setInterval(() => setTimeLeft(Math.max(nextTimeOut - Date.now(), 0)), 100);
       return () => interval && clearInterval(interval);
-   }, [inTurn, nextTimeOut, winner]);
+   }, [inTurn, nextTimeOut]);
    return (
       <div className={`${styles.contentC} ${inTurn && styles.inTurn}`}>
          <div className={`${styles.name}`}>{name}</div>
@@ -58,18 +63,22 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
                </>
             ) : null}
          </div>
+         <div className={`${styles.handName}`}>{handName}</div>
+         {(boxAction || isWinner) && (
+            <div className={`${styles.action} ${styles[`action-${boxAction}`]}`}>{isWinner ? "Winner" : boxAction}</div>
+         )}
          <div className={`${styles.pos} ${pos && styles[pos]}`}>{pos}</div>
          {roundPot > 0 && (
             <div className={`${styles.seat}`}>
                <Chip value={roundPot} />
             </div>
          )}
-         {(inTurn || winner) && (
+         {inTurn && round !== "post" && (
             <div className={`${styles.progressC}`}>
                <div className={`${styles.progress}`} style={{ width: `${progressWidth}%` }}></div>
             </div>
          )}
-     </div>
+      </div>
    );
 };
 

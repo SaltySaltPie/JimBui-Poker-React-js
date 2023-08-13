@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainInput from "../../../components/shared/mainInput/MainInput";
 import styles from "./PokerRoom.module.scss";
 import MainButton from "../../../components/shared/mainButton/MainButton";
@@ -16,6 +16,8 @@ import Card from "../../../components/shared/card/Card";
 import PokerPlayerBox from "../../../components/poker/pokerPlayerBox/PokerPlayerBox";
 import SmallSpinner from "../../../components/shared/smallSpinner/SmallSpinner";
 import { AxiosError } from "axios";
+import { s3Link } from "../../../utils/aws/s3Link";
+import { jsPlaySound } from "../../../utils/js/jsPlaySound";
 const PokerRoom = () => {
    const { Axios } = useAxios();
 
@@ -53,18 +55,20 @@ const PokerRoom = () => {
       round,
       scoreboard = [],
       game_players = [],
+      players_action = [],
+      previous_player_action,
    } = roomData || {};
-   const bbCost = 2;
+
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
 
    const isSeated = !!sub && seatedPlayers.map(({ sub }) => sub).includes(sub);
    const mySeatIndex = isSeated ? players.findIndex((player) => player?.sub === sub) : null;
    const myHand = mySeatIndex != null ? player_hands[mySeatIndex] : null;
-   const { combo = [] } = myHand || {};
+   const { combo = [], show } = myHand || {};
 
    const iAmInTurn = mySeatIndex != null ? play_order[play_order_index] === mySeatIndex : null;
    const myRoundPot = mySeatIndex != null ? round_pot[mySeatIndex] : 0;
-   const myTotalSpent = mySeatIndex != null ? pot[mySeatIndex] || 0 + round_pot[mySeatIndex] || 0 : 0;
+   const myTotalSpent = mySeatIndex != null ? (pot[mySeatIndex] || 0) + (round_pot[mySeatIndex] || 0) : 0;
 
    const handleChatSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       sioSendChat(chat);
@@ -126,6 +130,38 @@ const PokerRoom = () => {
       setSubmitting(false);
    };
 
+   const handleRabbit = async () => {
+      setSubmitting(true);
+      appDispatch({ type: "pushInfoModal", payload: { msg: `Requesting to Rabbit Hunt!` } });
+      try {
+      } catch (error) {}
+      setSubmitting(false);
+   };
+
+   const test = () => {};
+
+   useEffect(() => {
+      const checkSound = new Audio(s3Link(`/poker/sounds/check.mp3`));
+      const callSound = new Audio(s3Link(`/poker/sounds/call.mp3`));
+      const raiseSound = new Audio(s3Link(`/poker/sounds/raise.mp3`));
+      const foldSound = new Audio(s3Link(`/poker/sounds/fold.mp3`));
+      const chipsSound = new Audio(s3Link(`/poker/sounds/chips.mp3`));
+      const knockSound = new Audio(s3Link(`/poker/sounds/knocking.mp3`));
+      if (previous_player_action === "call") setTimeout(() => jsPlaySound(callSound), 1000);
+      if (previous_player_action === "raise") setTimeout(() => jsPlaySound(raiseSound), 1000);
+      if (["call", "raise"].includes(previous_player_action || "")) jsPlaySound(chipsSound);
+      if (previous_player_action === "check") {
+         jsPlaySound(knockSound);
+         setTimeout(() => jsPlaySound(checkSound), 1000);
+      }
+      if (previous_player_action === "fold") jsPlaySound(foldSound);
+   }, [previous_player_action, play_order]);
+
+   useEffect(() => {
+      const inTurnSound = new Audio(s3Link(`/poker/sounds/decide.mp3`));
+      if (iAmInTurn) jsPlaySound(inTurnSound);
+   }, [iAmInTurn]);
+
    if (qPkRFetching) return <BodyFiller loading />;
    if (!room) return <BodyFiller fillerMsg="Null Room" />;
    return (
@@ -137,6 +173,7 @@ const PokerRoom = () => {
                   <div>Status: {status}</div>
                </div>
                <div className={`${styles.roomR}`}>
+                  <MainButton title="test" onClick={test} />
                   {isSeated && <MainButton title="Stand Up" onClick={handleStandUp} />}
                </div>
             </div>
@@ -170,7 +207,7 @@ const PokerRoom = () => {
                            <span style={{ textTransform: "uppercase" }}>[{round}]</span>
                            {myHand && <span>{myHand.desc}</span>}
                         </div>
-                        <ul className={`${styles.cardsC}`}>
+                        <div className={`${styles.cardsC}`}>
                            {[...Array(5)].map((_, i) => (
                               <Card
                                  combo={combo.includes(community_cards[i])}
@@ -179,11 +216,18 @@ const PokerRoom = () => {
                                  className={`${styles.card}`}
                               />
                            ))}
-                        </ul>
+                        </div>
                         <div>
                            <span>Pot: {pot.reduce((prev, curr) => prev + curr, 0)}</span> |{" "}
                            <span>Spent: {myTotalSpent}</span> | <span>Stake: {stake}</span>
                         </div>
+                        {round === "post" && (
+                           <div className={`${styles.postControls}`}>
+                              {!show && <MainButton title="Show" />}
+                              {community_cards.length < 5 && <MainButton title="Rabbit" />}
+                              <MainButton title="Start" onClick={handleStart} />
+                           </div>
+                        )}
                      </div>
                   )}
                </div>

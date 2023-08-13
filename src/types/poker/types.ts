@@ -2,7 +2,7 @@ export type TPokerPlayer = {
    sub: string;
    name: string | null;
 };
-
+export type TPokerPlayerAction = "call" | "fold" | "check" | "raise" | null;
 export type TPokerRoom = {
    players: (TPokerPlayer | null)[];
    status: string;
@@ -27,12 +27,15 @@ export type TPokerRoom = {
       stake: number; // 0
       //*                     0              3  4              7
       round_pot: number[]; //[30, null, null,30,30, null, null,30, null]
-      round: "pre" | "flop" | "turn" | "river";
+      round: "pre" | "flop" | "turn" | "river" | "post";
       nextTimeOut: number;
 
       sb_index: number; // sub2 : 3
       play_order: number[]; // sub index[] : [4 , 7, 0, 3] => [0 , 3, 4, 7]
       play_order_index: number; // order index : 0
+      previous_player_action: TPokerPlayerAction;
+      players_action: TPokerPlayerAction[];
+      winnerSeats: number[];
    };
 };
 
@@ -51,6 +54,5 @@ export type TPokerPlayerHand = {
    combo: string[];
    desc: string;
    name: string;
-   show?: boolean
-   winner?: boolean
+   show?: boolean;
 };
