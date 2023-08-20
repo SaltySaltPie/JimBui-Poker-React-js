@@ -44,6 +44,7 @@
       position: absolute;
       left: 0;
       animation: slideInFromLeft 0.6s ease forwards;
+      z-index: 1;
       .msgC {
          height: calc(100% - 1rem - 2rem);
          width: 100%;
@@ -145,7 +146,7 @@
                &:nth-child(5) {
                   top: 0;
                   left: 50%;
-                  transform: translate(-50%, -100%);
+                  transform: translate(-50%, -50%);
                }
             }
 
@@ -161,7 +162,7 @@
                      font-size: 21px;
                   }
                }
-               .postControls{
+               .postControls {
                   display: flex;
                   gap: 6px;
                }
@@ -195,9 +196,8 @@
       display: flex;
       position: relative;
       height: calc(100vh - 4rem);
- 
-      .gameC {
 
+      .gameC {
          .tableC {
             .table {
                .gameInfoC {

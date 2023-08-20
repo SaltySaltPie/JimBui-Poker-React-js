@@ -17,12 +17,14 @@
    .cardsC {
       display: flex;
       gap: 8px;
-      margin-bottom: 8px;
+      position: relative;
+      margin-bottom: 4px;
       .card {
          width: 1.2rem;
          font-size: 14px;
       }
    }
+
    .handName {
       font-size: 10px;
    }
@@ -62,14 +64,14 @@
       background-color: #8bc444;
    }
 
-   .seat {
+   .chip {
       position: absolute;
       display: flex;
       gap: 6px;
       align-items: center;
-      bottom: -2rem;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 0;
+      right: 0;
+      transform: translate(50%,-50%);
    }
    .progressC {
       width: 80%;
@@ -83,6 +85,29 @@
          height: 100%;
          // transition: all 0.15s ease;
       }
+   }
+   .msgC{
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      left: 0;
+      bottom: 100%;
+      font-size: 12px;
+      border-radius: 10px;
+      color: var(--bg-b);
+      background-color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+   }
+   .show {
+      position: absolute;
+      top: 100%;
+      color: var(--acce-1);
+      font-weight: bold;
+      font-style: italic;
+      font-size: 10px;
    }
 }
 

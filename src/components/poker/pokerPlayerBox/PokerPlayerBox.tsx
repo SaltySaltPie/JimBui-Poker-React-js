@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TPokerRoom } from "../../../types/poker/types";
 import Card from "../../shared/card/Card";
 import Chip from "../../shared/chip/Chip";
 import styles from "./PokerPlayerBox.module.scss";
 import { jsArrayGetAfterIndex } from "../../../utils/js/jsArrayGetAfterIndex";
 import { jsArrayGetBeforeIndex } from "../../../utils/js/jsArrayGetBeforeIndex";
-const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
+const PokerPlayerBox = ({ room, seat, msgs = [] }: TPokerPlayerBoxProps) => {
    const { data: roomData, players = [], config } = room;
    const { timeoutMs = 10000 } = config || {};
    const {
@@ -23,7 +23,7 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
    const playerSeats = game_players
       .map((player, i) => (player ? i : null))
       .filter((seatIndex) => seatIndex != null) as number[];
-
+   if (msgs.length > 0) console.log({ msgs });
    const player = players[seat];
    const { name } = player || {};
    const roundPot = round_pot[seat];
@@ -41,6 +41,20 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
 
    const [timeLeft, setTimeLeft] = useState(0);
    const progressWidth = timeLeft > 0 ? (timeLeft / timeoutMs) * 100 : 0;
+   const [msg, setMsg] = useState("");
+
+   const clearMsgRef = useRef<NodeJS.Timeout | null>(null);
+   const lastMsgRef = useRef("");
+   useEffect(() => {
+      const newMsg = msgs[0];
+      if (newMsg && newMsg !== lastMsgRef.current) {
+         lastMsgRef.current = newMsg;
+         if (clearMsgRef.current) clearTimeout(clearMsgRef.current);
+         setMsg(newMsg);
+         clearMsgRef.current = setTimeout(() => setMsg(""), 2000);
+      }
+   }, [msgs]);
+
    useEffect(() => {
       let interval: NodeJS.Timer;
       if (inTurn) interval = setInterval(() => setTimeLeft(Math.max(nextTimeOut - Date.now(), 0)), 100);
@@ -67,7 +81,7 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
          )}
          <div className={`${styles.pos} ${pos && styles[pos]}`}>{pos}</div>
          {roundPot > 0 && (
-            <div className={`${styles.seat}`}>
+            <div className={`${styles.chip}`}>
                <Chip value={roundPot} />
             </div>
          )}
@@ -76,6 +90,8 @@ const PokerPlayerBox = ({ room, seat }: TPokerPlayerBoxProps) => {
                <div className={`${styles.progress}`} style={{ width: `${progressWidth}%` }}></div>
             </div>
          )}
+         {show && <div className={`${styles.show}`}>SHOWN!</div>}
+         <div className={`${styles.msgC}`}>{msg}</div>
       </div>
    );
 };
@@ -84,6 +100,7 @@ export default PokerPlayerBox;
 type TPokerPlayerBoxProps = {
    room: TPokerRoom;
    seat: number;
+   msgs: string[];
 };
 // export type TPokerPlayerBoxPlayer = {
 //    sub: string;

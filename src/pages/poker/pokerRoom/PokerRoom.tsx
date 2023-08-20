@@ -4,7 +4,7 @@ import styles from "./PokerRoom.module.scss";
 import MainButton from "../../../components/shared/mainButton/MainButton";
 import { useMainSocket } from "../../../hooks/socket.io/useMainSocket";
 import { useSocketEvent } from "socket.io-react-hook";
-import { TChatMsg } from "../../../types/chat";
+import { TChatMsg } from "../../../types/chat/types";
 import { useQPokerRoom } from "../../../hooks/querries/poker/useQPokerRoom";
 import BodyFiller from "../../../components/shared/bodyFiller/BodyFiller";
 import { useParams } from "react-router-dom";
@@ -58,8 +58,6 @@ const PokerRoom = () => {
       players_action = [],
       previous_player_action,
    } = roomData || {};
-   console.log({player_hands})
-
    const seatedPlayers = players.filter(Boolean) as TPokerPlayer[];
 
    const isSeated = !!sub && seatedPlayers.map(({ sub }) => sub).includes(sub);
@@ -200,7 +198,11 @@ const PokerRoom = () => {
                   {[...Array(9)].map((_, i) => (
                      <div className={`${styles.seat}`} key={i}>
                         {players[i] ? (
-                           <PokerPlayerBox room={room} seat={i} />
+                           <PokerPlayerBox
+                              room={room}
+                              seat={i}
+                              msgs={msgs.filter((c) => c.sender === players[i]?.name).map(({ msg }) => msg)}
+                           />
                         ) : isSeated ? (
                            <div>Empty</div>
                         ) : (
@@ -305,7 +307,6 @@ const PokerRoom = () => {
             <article className={`${styles.scoreC}`}>
                <div className={`${styles.titleC}`}>
                   <span>Scoreboard</span>
-                  <MainButton title="Hide" type="warn" onClick={() => setShowScore(false)} />
                </div>
                <ul className={`${styles.scoreLines}`}>
                   {scoreboard.map(({ alpha, name, sub }, key) => (
@@ -317,6 +318,9 @@ const PokerRoom = () => {
                      </li>
                   ))}
                </ul>
+               <div className={`${styles.scoreBtn}`}>
+                  <MainButton title="Hide" type="warn" onClick={() => setShowScore(false)} />
+               </div>
             </article>
          ) : (
             <MainButton title="Score" onClick={() => setShowScore(true)} className={`${styles.scoreBtn}`} />

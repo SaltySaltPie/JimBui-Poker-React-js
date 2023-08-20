@@ -26,7 +26,8 @@
   "scripts": {
     "start": "react-scripts start",
     "dev": "react-scripts start",
-    "build": "react-scripts build",
+    "build-sta": "react-scripts build",
+    "build-pro": "crossenv REACT_APP_API=https://",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -49,6 +50,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "cross-env": "^7.0.3"
   }
 }
