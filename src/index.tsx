@@ -17,14 +17,12 @@ root.render(
       <Auth0Provider
          domain="dev-kj92tcix.jp.auth0.com"
          clientId="84ftcvjGh3nK2BdUJiapMQ47GqoI7Rqg"
-         authorizationParams={{
-            redirect_uri: window.location.origin,
-         }}
+         authorizationParams={{ redirect_uri: window.location.origin }}
       >
          <AppState>
             <IoProvider>
                <QueryClientProvider client={queryClient}>
-                  <InfoModal/>
+                  <InfoModal />
                   <App />
                </QueryClientProvider>
             </IoProvider>

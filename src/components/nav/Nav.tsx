@@ -79,7 +79,11 @@ const Nav = () => {
                      </div>
                   )}
 
-                  <MainButton type="bland" title="Log Out" onClick={logout} />
+                  <MainButton
+                     type="bland"
+                     title="Log Out"
+                     onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                  />
                </div>
             ) : (
                <MainButton title="Log In" onClick={() => loginWithRedirect()} />
