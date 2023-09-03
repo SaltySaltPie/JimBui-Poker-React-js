@@ -154,8 +154,6 @@ const PokerRoom = () => {
       setSubmitting(false);
    };
 
-   const test = () => {};
-
    useEffect(() => {
       const checkSound = new Audio(s3Link(`/poker/sounds/check.mp3`));
       const callSound = new Audio(s3Link(`/poker/sounds/call.mp3`));
@@ -177,19 +175,18 @@ const PokerRoom = () => {
       const inTurnSound = new Audio(s3Link(`/poker/sounds/decide.mp3`));
       if (iAmInTurn) jsPlaySound(inTurnSound);
    }, [iAmInTurn]);
-
    if (qPkRFetching) return <BodyFiller loading />;
    if (!room) return <BodyFiller fillerMsg="Null Room" />;
+   const test = () => console.log({room})
    return (
       <section className={`${styles.contentC}`}>
          <article className={`${styles.gameC}`}>
             <div className={`${styles.roomInfoC} `}>
                <div className={`${styles.roomL}`}>
-                  <div>Room: {rid}</div>
+                  <div onClick={test}>Room: {rid}</div>
                   <div>Status: {status}</div>
                </div>
                <div className={`${styles.roomR}`}>
-                  <MainButton title="test" onClick={test} />
                   {isSeated && <MainButton title="Stand Up" onClick={handleStandUp} />}
                </div>
             </div>
