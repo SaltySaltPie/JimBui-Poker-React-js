@@ -17,7 +17,9 @@ root.render(
       <Auth0Provider
          domain="dev-kj92tcix.jp.auth0.com"
          clientId="84ftcvjGh3nK2BdUJiapMQ47GqoI7Rqg"
-         authorizationParams={{ redirect_uri: window.location.origin }}
+         authorizationParams={{ redirect_uri: window.location.origin, audience: "casino-api" }}
+         cacheLocation="localstorage"
+         useRefreshTokens
       >
          <AppState>
             <IoProvider>
